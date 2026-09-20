@@ -73,7 +73,19 @@ test.describe('Login', { tag: `@login`}, () => {
     test('TC-005, Login with incorrect password', async ({ page }) => {
         const userEmail = email();
 
-        await page.goto('/articles/login');
+        await page.goto('/register');
+        await page.getByTestId('auth-username').fill(name());
+        await page.getByTestId('auth-email').fill(userEmail);
+        await page.getByTestId('auth-password').fill(`ValPass12^`);
+        await page.getByTestId('register-confirm-password').fill(`ValPass12^`);
+        await page.getByTestId('register-terms').click();
+        await page.getByTestId('auth-submit').click();
+        await page.getByTestId('nav-profile').click();
+        await page.getByRole('link', { name: 'Edit profile' }).click();
+        await page.getByTestId('logout-button').click();
+        await expect(page.getByTestId('nav-profile')).not.toBeVisible();
+
+        await page.getByTestId('nav-sign-in').click();
         await page.getByTestId('auth-email').fill(userEmail);
         await page.getByTestId('auth-password').fill(`ValPass123^`);
         await page.getByTestId('auth-submit').click();
@@ -82,7 +94,7 @@ test.describe('Login', { tag: `@login`}, () => {
     test('TC-006, Login with unknown email', async ({ page }) => {
         const userEmail = email();
 
-        await page.goto('/articles/login');
+        await page.goto('/login');
         await page.getByTestId('auth-email').fill(`new-${userEmail}`);
         await page.getByTestId('auth-password').fill(`ValPass12^`);
         await page.getByTestId('auth-submit').click();
